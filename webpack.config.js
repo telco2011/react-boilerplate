@@ -1,11 +1,14 @@
 var webpack = require('webpack');
 var path = require('path');
 
+var BUILD_DIR = path.resolve(__dirname, 'public');
+var APP_DIR = path.resolve(__dirname, 'app');
+
 module.exports = {
   entry: [
-    'script!jquery/dist/jquery.min.js',
-    'script!foundation-sites/dist/foundation.min.js',
-    './app/app.jsx'
+    'script-loader!jquery/dist/jquery.min.js',
+    'script-loader!foundation-sites/dist/js/foundation.min.js',
+    APP_DIR + '/app.jsx'
   ],
   externals: {
     jquery: 'jQuery'
@@ -14,15 +17,24 @@ module.exports = {
     new webpack.ProvidePlugin({
       '$': 'jquery',
       'jQuery': 'jquery'
+    }),
+    new webpack.LoaderOptionsPlugin({
+      options: {
+        context: '/', // <- putting this line right under "options" did the trick
+        sassLoader: {
+          includePaths: [
+            path.resolve(__dirname, './node_modules/foundation-sites/scss')
+          ]
+        }
+      }
     })
   ],
   output: {
-    path: __dirname,
-    filename: './public/bundle.js'
+    path: BUILD_DIR,
+    filename: 'bundle.js'
   },
   resolve: {
-    root: __dirname,
-    modulesDirectories: [
+    modules: [
       'node_modules',
       'app/components',
       'app/api'
@@ -30,7 +42,7 @@ module.exports = {
     alias: {
       applicationStyles: 'app/styles/app.scss'
     },
-    extensions: ['', '.js', '.jsx']
+    extensions: ['.js', '.jsx']
   },
   module: {
     loaders: [
@@ -42,11 +54,6 @@ module.exports = {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/
       }
-    ]
-  },
-  sassLoader: {
-    includePaths: [
-      path.resolve(__dirname, './node_modules/foundation-sites/scss')
     ]
   },
   devtool: 'inline-source-map'

@@ -1,8 +1,10 @@
 @import "base/variables";
 
 // Foundation
-@import "base/foundation-settings";
-@import "foundation";
+@import 'foundation';
+@import 'motion-ui';
+
 @include foundation-everything;
+@include motion-ui-transitions;
 
 // Components
